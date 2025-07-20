@@ -52,42 +52,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 - Enable Row Level Security (RLS) and add appropriate policies.
 - [Optional] Enable Realtime for live updates.
 
-### 5. Edge Function for Email Confirmation
-
-- Create a Resend account and verify your sender domain.
-- In Supabase, go to Edge Functions and create a function (e.g., `resend-email`).
-- Add your Resend API key as a secret named `RESEND_API_KEY` in Supabase.
-- Use the following code for your function:
-
-```ts
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-Deno.serve(async (req) => {
-  const { to, subject, html } = await req.json();
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-    },
-    body: JSON.stringify({
-      from: "noreply@yourdomain.com", // Use your verified sender
-      to,
-      subject,
-      html,
-    }),
-  });
-  const data = await res.json();
-  return new Response(JSON.stringify(data), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    status: res.ok ? 200 : 500,
-  });
-});
-```
-
-### 6. Running the App Locally
+### 5. Running the App Locally
 
 ```sh
 npm run dev
